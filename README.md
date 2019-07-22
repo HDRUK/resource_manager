@@ -6,5 +6,6 @@ This tool servers to allocate resources for processes in the same machine.
 - it stores the pid of the process that requested it
 
 ## How to use
-- call the sample code for requesting resources
+- start the server (e.g. *python 20181024_manager_gpu.py*)
+- call the sample code for requesting resources (e.g. *resource_manager_client.try_resource*)
 - close the process after using the resource
