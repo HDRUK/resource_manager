@@ -5,7 +5,7 @@ import os
 import subprocess
 
 def currently_running():
-    p = subprocess.Popen("ps -o pid,cmd -ef | grep -v defunct | cut -d ' ' -f 2 | sort -u", shell=True, stdout=subprocess.PIPE)
+    p = subprocess.Popen("ps -o pid,cmd -ef | grep -v defunct | sed 's/^ *//;s/ *$//' | cut -d ' ' -f 1 | sort -u", shell=True, stdout=subprocess.PIPE)
     p.wait()
     e, _ = p.communicate()
     return [int(i) for i in e.decode().split('\n') if i.isdigit()]
