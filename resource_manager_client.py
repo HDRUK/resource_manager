@@ -5,23 +5,19 @@ import os
 import time
 
 
-def try_resource(blocking = False, sleep_time = 60, TCP_IP='127.0.0.1', TCP_PORT=5011):
-    '''
-        this function will query for an available resource in the server
-        blocking: if this function should loop until we get an available device
-        sleep_time: the time in seconds to sleep until next try
-    '''
+def _send_message(blocking, sleep_time, TCP_IP, TCP_PORT, MESSAGE):
+    signal = False
+    PATH = 'NONE'
     if sleep_time <= 0: #let's have a minimum amount of time so we don't overload
         sleep_time = 5
-    signal = False
-    path = "NONE"
     while not signal: #while we don't have signal or exit
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #setup tcp
             s.connect((TCP_IP, TCP_PORT)) #connect to the manager
-            MESSAGE = "HELLO {}".format(os.getpid()).encode("ASCII") #prepare message
-            s.send(MESSAGE) #send message
+            s.send(MESSAGE.encode('ASCII')) #send message
             data = s.recv(512) #receive manager message with buffer_size 512
+            signal, path = data.decode().split(' ') #decode output
+            signal = signal.lower() in ["true", "yes"] #convert from str to bool
             s.close() #close the tcp connection
         except Exception as e: # if the tcp connection fails report it
             print(e)
@@ -29,13 +25,25 @@ def try_resource(blocking = False, sleep_time = 60, TCP_IP='127.0.0.1', TCP_PORT
                 return False, "ERROR"
             time.sleep(sleep_time) #sleep before trying again
             continue #otherwise will try again
-        signal, path = data.decode().split(' ') #decode output
-        signal = signal.lower() in ["true", "yes"] #convert from str to bool
         if not blocking or signal: #if not blocking exit the loop
             return signal, path #return the answer
         time.sleep(sleep_time) #sleep some time if we are waiting for an available device
+    return signal, path
+
+def try_resource(blocking = False, sleep_time = 60, TCP_IP='127.0.0.1', TCP_PORT=5013):
+    '''
+        this function will query for an available resource in the server
+        blocking: if this function should loop until we get an available device
+        sleep_time: the time in seconds to sleep until next try
+    '''
+    signal = False
+    path = "NONE"
+    MESSAGE = "HELLO {}".format(os.getpid())
+    signal, path = _send_message(blocking, sleep_time, TCP_IP, TCP_PORT, MESSAGE)
     return signal, path #if it was blocking this will return some signal
 
+def release_resource(TCP_IP='127.0.0.1', TCP_PORT=5013):
+    _send_message(blocking=False, sleep_time=5, TCP_IP=TCP_IP, TCP_PORT=TCP_PORT, MESSAGE='BYE {}'.format(os.getpid()))
 
 if __name__ == '__main__':
     print(try_resource(True, 5))
