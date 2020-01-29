@@ -11,7 +11,7 @@ In the testbed it was used to split the use of 3 GPUs.
 
 ## How to use
 - start the server (e.g. `python 20181024_manager_gpu.py`)
-- call the sample code for requesting resources (call `resource_manager_client.try_resource`)
+- a consumer requests for a resource (call `resource_manager_client.try_resource`)
 - close the process after using the resource (or call `resource_manager_client.release_resource`)
 
 ## Issues
