@@ -5,7 +5,7 @@ import os
 import subprocess
 
 def currently_running():
-    p = subprocess.Popen("ps -o pid,cmd -ef | grep -v defunct | sed 's/^ *//;s/ *$//' | cut -d ' ' -f 1 | sort -u", shell=True, stdout=subprocess.PIPE)
+    p = subprocess.Popen("ps -a -x -o pid,cmd -ef | grep -v defunct | sed 's/^ *//;s/ *$//' | cut -d ' ' -f 1 | sort -u", shell=True, stdout=subprocess.PIPE)
     p.wait()
     e, _ = p.communicate()
     return [int(i) for i in e.decode().split('\n') if i.isdigit()]
@@ -15,7 +15,7 @@ def resource_manager(TCP_IP='127.0.0.1', TCP_PORT=5013, devices=None):
         devices = { #the devices available for gpu in the server
             0: {'name': 'gpu0', 'path': '/gpu:0', 'available':True, 'pid_using': 0},
             1: {'name': 'gpu1', 'path': '/gpu:1', 'available':True, 'pid_using': 0},
-            #2: {'name': 'gpu2', 'path': '/gpu:2', 'available':True, 'pid_using': 0}
+            2: {'name': 'gpu2', 'path': '/gpu:2', 'available':True, 'pid_using': 0}
         }
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM) #starts the socket
     s.bind((TCP_IP, TCP_PORT)) #this will bind to the settings given before. if TCP_IP is 127.0.0.1 it will only accept loopback connections
