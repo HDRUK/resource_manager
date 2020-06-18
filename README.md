@@ -1,11 +1,19 @@
 # resource_manager
 
-This tool servers to allocate resources for processes in the same machine.
+This is a simple tool to orchestrate resource sharing. It does not require admin permissions and may be used as a simple solution to share resources.
+
+In the testbed it was used to split the use of 3 GPUs.
+
+## Features
 - works via tcp/ip
-- this tool does not respect any order (the first process to request gets the access)
-- it stores the pid of the process that requested it
+- out-of-order requisition (lucky goes first)
+- process pid stored and checked for exit
 
 ## How to use
-- start the server (e.g. *python 20181024_manager_gpu.py*)
-- call the sample code for requesting resources (e.g. *resource_manager_client.try_resource*)
-- close the process after using the resource
+- start the server (e.g. `python 20181024_manager_gpu.py`)
+- a consumer requests for a resource (call `resource_manager_client.try_resource`)
+- close the process after using the resource (or call `resource_manager_client.release_resource`)
+
+## Issues
+
+Docker might change the pid of the process, it might require some changes to work properly
