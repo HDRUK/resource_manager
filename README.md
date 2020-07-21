@@ -1,4 +1,6 @@
-# resource_manager
+# Resource Manager
+
+_**The situation is**: you have to execute many scripts, however they use too much memory. You can execute them one after the other, install a large scale resource manager such as [slurm](https://slurm.schedmd.com/documentation.html) or even a [reduced slurm version](https://github.com/labrax/minimal-slurm), or you can use this resource manager._
 
 This is a simple tool to orchestrate resource sharing. It does not require admin permissions and may be used as a simple solution to share resources.
 
@@ -16,4 +18,6 @@ In the testbed it was used to split the use of 3 GPUs.
 
 ## Issues
 
-Docker might change the pid of the process, it might require some changes to work properly
+- Docker might change the pid of the process, the manager won't be able to identify the pid correctly
+
+- When using processes over the network the pid might not be passed correctly, changes to release the resource manually will be required
